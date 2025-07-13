@@ -38,10 +38,6 @@ export default function AdminDashboard({ user }: { user: User }) {
   const router = useRouter();
   const supabase = createClientClient();
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
@@ -66,6 +62,10 @@ export default function AdminDashboard({ user }: { user: User }) {
       setLoading(false);
     }
   }, [supabase]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
