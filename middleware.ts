@@ -1,13 +1,13 @@
 import createMiddleware from 'next-intl/middleware';
+import { NextRequest } from 'next/server';
 
-export default createMiddleware({
+const intlMiddleware = createMiddleware({
   // A list of all locales that are supported
   locales: ['ko', 'en'],
 
   // Used when no locale matches
   defaultLocale: 'ko',
 
-  // Don't apply locale routing to admin routes
   pathnames: {
     '/': '/',
     '/portfolio': '/portfolio',
@@ -16,7 +16,16 @@ export default createMiddleware({
   }
 });
 
+export default function middleware(request: NextRequest) {
+  // Skip internationalization for admin routes
+  if (request.nextUrl.pathname.startsWith('/admin')) {
+    return;
+  }
+  
+  return intlMiddleware(request);
+}
+
 export const config = {
-  // Match only internationalized pathnames
-  matcher: ['/', '/(ko|en)/:path*', '/((?!api|admin|_next|_vercel|.*\\..*).*)']
+  // Match all pathnames except for admin, api, static files
+  matcher: ['/((?!admin|api|_next|_vercel|.*\\..*).*)']
 };
