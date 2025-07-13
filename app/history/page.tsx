@@ -1,26 +1,37 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+
+interface HistoryItem {
+  id: number;
+  year: string;
+  title: string;
+  description: string;
+  date: string;
+}
+
 export default function History() {
-  const milestones = [
-    {
-      year: "2024",
-      title: "회사 설립",
-      description: "AI 기반 소프트웨어 개발을 목표로 Two Loom 설립"
-    },
-    {
-      year: "2024",
-      title: "첫 번째 AI 솔루션 출시",
-      description: "고객 서비스 자동화를 위한 AI 챗봇 솔루션 개발 및 출시"
-    },
-    {
-      year: "2024",
-      title: "모바일 앱 개발 확장",
-      description: "React Native 기반 모바일 앱 개발 서비스 확장"
-    },
-    {
-      year: "2024",
-      title: "기업 파트너십",
-      description: "다양한 기업과의 파트너십을 통한 프로젝트 확장"
+  const [milestones, setMilestones] = useState<HistoryItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchHistory();
+  }, []);
+
+  const fetchHistory = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/history');
+      const data = await response.json();
+      if (data.history) {
+        setMilestones(data.history);
+      }
+    } catch (error) {
+      console.error('Failed to fetch history:', error);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -58,34 +69,44 @@ export default function History() {
       {/* Timeline */}
       <section className="py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative">
-            {/* Timeline line */}
-            <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-primary-200"></div>
-            
-            {milestones.map((milestone, index) => (
-              <div key={index} className="relative flex items-start mb-12">
-                {/* Timeline dot */}
-                <div className="flex-shrink-0 w-16 h-16 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
-                  {milestone.year.slice(-2)}
-                </div>
-                
-                {/* Content */}
-                <div className="ml-8 bg-white rounded-lg shadow-md p-6 flex-1">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-xl font-semibold text-gray-900">
-                      {milestone.title}
-                    </h3>
-                    <span className="text-sm font-medium text-primary-600 bg-primary-50 px-3 py-1 rounded">
-                      {milestone.year}
-                    </span>
+          {loading ? (
+            <div className="flex justify-center items-center py-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
+            </div>
+          ) : milestones.length > 0 ? (
+            <div className="relative">
+              {/* Timeline line */}
+              <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-primary-200"></div>
+              
+              {milestones.map((milestone, index) => (
+                <div key={milestone.id} className="relative flex items-start mb-12">
+                  {/* Timeline dot */}
+                  <div className="flex-shrink-0 w-16 h-16 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                    {milestone.year.slice(-2)}
                   </div>
-                  <p className="text-gray-600 leading-relaxed">
-                    {milestone.description}
-                  </p>
+                  
+                  {/* Content */}
+                  <div className="ml-8 bg-white rounded-lg shadow-md p-6 flex-1">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-xl font-semibold text-gray-900">
+                        {milestone.title}
+                      </h3>
+                      <span className="text-sm font-medium text-primary-600 bg-primary-50 px-3 py-1 rounded">
+                        {milestone.year}
+                      </span>
+                    </div>
+                    <p className="text-gray-600 leading-relaxed">
+                      {milestone.description}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-20">
+              <p className="text-gray-500 text-lg">연혁 정보가 없습니다.</p>
+            </div>
+          )}
         </div>
       </section>
 

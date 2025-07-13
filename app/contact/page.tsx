@@ -17,11 +17,37 @@ export default function Contact() {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // 임시로 alert로 처리 (실제로는 API 호출 등)
-    alert('문의가 접수되었습니다. 빠른 시일 내에 연락드리겠습니다.');
-    setFormData({ name: '', email: '', company: '', message: '' });
+    setIsSubmitting(true);
+    setSubmitMessage('');
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setSubmitMessage('문의가 접수되었습니다. 빠른 시일 내에 연락드리겠습니다.');
+        setFormData({ name: '', email: '', company: '', message: '' });
+      } else {
+        setSubmitMessage(result.error || '문의 접수 중 오류가 발생했습니다.');
+      }
+    } catch (error) {
+      console.error('Submit error:', error);
+      setSubmitMessage('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -196,11 +222,20 @@ export default function Contact() {
                   />
                 </div>
 
+                {submitMessage && (
+                  <div className={`p-4 rounded-lg mb-4 ${
+                    submitMessage.includes('접수') ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'
+                  }`}>
+                    {submitMessage}
+                  </div>
+                )}
+
                 <button
                   type="submit"
-                  className="w-full bg-primary-500 text-white py-3 px-6 rounded-lg font-medium hover:bg-primary-600 transition-colors"
+                  disabled={isSubmitting}
+                  className="w-full bg-primary-500 text-white py-3 px-6 rounded-lg font-medium hover:bg-primary-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  문의 보내기
+                  {isSubmitting ? '전송 중...' : '문의 보내기'}
                 </button>
               </form>
             </div>

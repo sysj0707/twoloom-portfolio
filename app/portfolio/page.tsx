@@ -1,57 +1,65 @@
-export default function Portfolio() {
-  // 임시 포트폴리오 데이터
-  const portfolioItems = [
-    {
-      id: 1,
-      title: "AI 챗봇 솔루션",
-      description: "고객 서비스 자동화를 위한 지능형 챗봇 시스템",
-      tech: ["Next.js", "Python", "OpenAI API", "PostgreSQL"],
-      image: "https://via.placeholder.com/400x250/6366f1/ffffff?text=AI+Chatbot",
-      category: "AI 솔루션"
-    },
-    {
-      id: 2,
-      title: "모바일 커머스 앱",
-      description: "사용자 친화적인 쇼핑 앱 개발",
-      tech: ["React Native", "Node.js", "MongoDB", "Stripe"],
-      image: "https://via.placeholder.com/400x250/8b5cf6/ffffff?text=Mobile+App",
-      category: "모바일 앱"
-    },
-    {
-      id: 3,
-      title: "기업 웹사이트",
-      description: "반응형 기업 홈페이지 및 관리자 시스템",
-      tech: ["Next.js", "TypeScript", "Tailwind CSS", "Supabase"],
-      image: "https://via.placeholder.com/400x250/06b6d4/ffffff?text=Web+Development",
-      category: "웹 개발"
-    },
-    {
-      id: 4,
-      title: "데이터 분석 대시보드",
-      description: "실시간 비즈니스 인텔리전스 대시보드",
-      tech: ["React", "D3.js", "Python", "FastAPI"],
-      image: "https://via.placeholder.com/400x250/10b981/ffffff?text=Dashboard",
-      category: "웹 개발"
-    },
-    {
-      id: 5,
-      title: "AI 이미지 분석 시스템",
-      description: "의료 영상 자동 분석 AI 솔루션",
-      tech: ["TensorFlow", "Python", "AWS", "Docker"],
-      image: "https://via.placeholder.com/400x250/f59e0b/ffffff?text=AI+Vision",
-      category: "AI 솔루션"
-    },
-    {
-      id: 6,
-      title: "IoT 모니터링 앱",
-      description: "스마트 팩토리 센서 데이터 모니터링",
-      tech: ["Flutter", "Firebase", "Arduino", "MQTT"],
-      image: "https://via.placeholder.com/400x250/ef4444/ffffff?text=IoT+App",
-      category: "모바일 앱"
-    }
-  ];
+'use client';
 
-  const categories = ["전체", "웹 개발", "모바일 앱", "AI 솔루션"];
+import { useEffect, useState } from 'react';
+
+interface Portfolio {
+  id: number;
+  title: string;
+  description: string;
+  short_description?: string;
+  thumbnail_url?: string;
+  tech_stack?: string[];
+  category_name: string;
+}
+
+interface Category {
+  id: number;
+  name: string;
+  slug: string;
+}
+
+export default function Portfolio() {
+  const [portfolios, setPortfolios] = useState<Portfolio[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchCategories();
+    fetchPortfolios();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch('/api/categories');
+      const data = await response.json();
+      if (data.categories) {
+        setCategories(data.categories);
+      }
+    } catch (error) {
+      console.error('Failed to fetch categories:', error);
+    }
+  };
+
+  const fetchPortfolios = async (category = 'all') => {
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/portfolios?category=${category}`);
+      const data = await response.json();
+      if (data.portfolios) {
+        setPortfolios(data.portfolios);
+      }
+    } catch (error) {
+      console.error('Failed to fetch portfolios:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCategoryChange = (categorySlug: string) => {
+    setSelectedCategory(categorySlug);
+    fetchPortfolios(categorySlug);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -92,14 +100,15 @@ export default function Portfolio() {
           <div className="flex flex-wrap justify-center gap-4">
             {categories.map((category) => (
               <button
-                key={category}
+                key={category.slug}
+                onClick={() => handleCategoryChange(category.slug)}
                 className={`px-6 py-2 rounded-full transition-colors ${
-                  category === "전체"
+                  selectedCategory === category.slug
                     ? "bg-primary-500 text-white"
                     : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                 }`}
               >
-                {category}
+                {category.name}
               </button>
             ))}
           </div>
@@ -109,46 +118,58 @@ export default function Portfolio() {
       {/* Portfolio Grid */}
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {portfolioItems.map((item) => (
-              <div
-                key={item.id}
-                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
-              >
-                <img
-                  src={item.image}
-                  alt={item.title}
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-primary-600 bg-primary-50 px-2 py-1 rounded">
-                      {item.category}
-                    </span>
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                    {item.title}
-                  </h3>
-                  <p className="text-gray-600 mb-4">
-                    {item.description}
-                  </p>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {item.tech.map((tech) => (
-                      <span
-                        key={tech}
-                        className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded"
-                      >
-                        {tech}
+          {loading ? (
+            <div className="flex justify-center items-center py-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
+            </div>
+          ) : portfolios.length > 0 ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {portfolios.map((item) => (
+                <div
+                  key={item.id}
+                  className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+                >
+                  <img
+                    src={item.thumbnail_url || "https://via.placeholder.com/400x250/6366f1/ffffff?text=Portfolio"}
+                    alt={item.title}
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="p-6">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-primary-600 bg-primary-50 px-2 py-1 rounded">
+                        {item.category_name}
                       </span>
-                    ))}
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                      {item.title}
+                    </h3>
+                    <p className="text-gray-600 mb-4">
+                      {item.short_description || item.description}
+                    </p>
+                    {item.tech_stack && item.tech_stack.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {item.tech_stack.map((tech) => (
+                          <span
+                            key={tech}
+                            className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    <button className="w-full bg-primary-500 text-white py-2 px-4 rounded-lg hover:bg-primary-600 transition-colors">
+                      자세히 보기
+                    </button>
                   </div>
-                  <button className="w-full bg-primary-500 text-white py-2 px-4 rounded-lg hover:bg-primary-600 transition-colors">
-                    자세히 보기
-                  </button>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-20">
+              <p className="text-gray-500 text-lg">해당 카테고리에 포트폴리오가 없습니다.</p>
+            </div>
+          )}
         </div>
       </section>
 
