@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { createClientClient } from '@/lib/auth';
 import { useRouter } from 'next/navigation';
 
@@ -40,9 +40,9 @@ export default function AdminDashboard({ user }: { user: User }) {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       
@@ -65,7 +65,7 @@ export default function AdminDashboard({ user }: { user: User }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [supabase]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
