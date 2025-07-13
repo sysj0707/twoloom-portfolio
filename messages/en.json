@@ -1,0 +1,112 @@
+{
+  "navigation": {
+    "home": "Home",
+    "portfolio": "Portfolio",
+    "history": "History", 
+    "contact": "Contact"
+  },
+  "home": {
+    "title": "AI-Powered Software Development",
+    "subtitle": "Creating better software with innovative AI technology.",
+    "cta": "Start Your Project",
+    "services": {
+      "title": "Our Services",
+      "web": {
+        "title": "Web Development",
+        "description": "Modern and responsive website development"
+      },
+      "mobile": {
+        "title": "Mobile Apps",
+        "description": "iOS/Android native and cross-platform apps"
+      },
+      "ai": {
+        "title": "AI Solutions",
+        "description": "Custom AI models and automation systems"
+      }
+    }
+  },
+  "portfolio": {
+    "title": "Portfolio",
+    "subtitle": "Explore various projects built by Two Loom",
+    "categories": {
+      "all": "All",
+      "web": "Web Development",
+      "mobile": "Mobile App",
+      "ai": "AI Solution"
+    },
+    "viewDetails": "View Details",
+    "loading": "Loading...",
+    "noProjects": "No portfolio items found in this category."
+  },
+  "history": {
+    "title": "Company History",
+    "subtitle": "Discover Two Loom's growth journey and key achievements",
+    "vision": {
+      "title": "Future Vision",
+      "innovation": {
+        "title": "Innovative Technology",
+        "description": "Developing innovative solutions using cutting-edge AI technology"
+      },
+      "global": {
+        "title": "Global Expansion",
+        "description": "Growing into a global company through international market expansion"
+      },
+      "satisfaction": {
+        "title": "Customer Satisfaction",
+        "description": "Providing top-quality services for customer success"
+      }
+    },
+    "noHistory": "No history information available."
+  },
+  "contact": {
+    "title": "Contact",
+    "subtitle": "Feel free to reach out if you have project inquiries or questions",
+    "info": {
+      "title": "Contact Information",
+      "email": "Email",
+      "location": "Location",
+      "workingHours": "Working Hours",
+      "workingHoursValue": "Weekdays 9:00 - 18:00"
+    },
+    "services": {
+      "title": "Main Services",
+      "web": {
+        "title": "Web Development",
+        "description": "Responsive websites and web app development"
+      },
+      "mobile": {
+        "title": "Mobile Apps",
+        "description": "iOS/Android app development"
+      },
+      "ai": {
+        "title": "AI Solutions",
+        "description": "Custom AI service development"
+      },
+      "consulting": {
+        "title": "Consulting",
+        "description": "Technical consulting and strategy planning"
+      }
+    },
+    "form": {
+      "title": "Send Inquiry",
+      "name": "Name",
+      "namePlaceholder": "Please enter your name",
+      "email": "Email",
+      "emailPlaceholder": "Please enter your email",
+      "company": "Company",
+      "companyPlaceholder": "Please enter your company name",
+      "message": "Message",
+      "messagePlaceholder": "Please describe your inquiry in detail",
+      "submit": "Send Inquiry",
+      "submitting": "Sending...",
+      "required": "*",
+      "successMessage": "Your inquiry has been received. We will contact you shortly."
+    }
+  },
+  "footer": {
+    "company": "Two Loom",
+    "description": "Creating better software with innovative AI technology.",
+    "copyright": "© 2024 Two Loom. All rights reserved.",
+    "contact": "Contact: one@twoloom.com"
+  }
+}
