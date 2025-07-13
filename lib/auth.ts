@@ -1,6 +1,5 @@
 import { createBrowserClient } from '@supabase/ssr'
 import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
 
 // 클라이언트용 Supabase 클라이언트
 export const createClientClient = () => {
@@ -10,8 +9,9 @@ export const createClientClient = () => {
   )
 }
 
-// 서버용 Supabase 클라이언트
-export const createSupabaseServerClient = () => {
+// 서버용 Supabase 클라이언트 (cookies는 호출 시점에 import)
+export const createSupabaseServerClient = async () => {
+  const { cookies } = await import('next/headers')
   const cookieStore = cookies()
   
   return createServerClient(
@@ -29,7 +29,7 @@ export const createSupabaseServerClient = () => {
 
 // 관리자 권한 확인
 export const isAdmin = async (userId: string) => {
-  const supabase = createSupabaseServerClient()
+  const supabase = await createSupabaseServerClient()
   
   const { data: profile } = await supabase
     .from('admin_profiles')
@@ -42,7 +42,7 @@ export const isAdmin = async (userId: string) => {
 
 // 로그인 상태 확인
 export const getUser = async () => {
-  const supabase = createSupabaseServerClient()
+  const supabase = await createSupabaseServerClient()
   
   try {
     const { data: { user } } = await supabase.auth.getUser()
@@ -54,7 +54,7 @@ export const getUser = async () => {
 
 // 관리자 프로필 생성/업데이트
 export const createAdminProfile = async (userId: string, fullName: string) => {
-  const supabase = createSupabaseServerClient()
+  const supabase = await createSupabaseServerClient()
   
   const { error } = await supabase
     .from('admin_profiles')
